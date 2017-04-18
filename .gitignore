@@ -1,4 +1,6 @@
 .*.swp
 .*.swo
-*.mat
 .ipynb_checkpoints
+*.mat
+
+.idea/

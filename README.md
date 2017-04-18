@@ -23,9 +23,15 @@ You will need to install dependencies:
 - Scipy
 - Numpy
 
-You will need to download the [VGG-19 model](http://www.vlfeat.org/matconvnet/models/imagenet-vgg-verydeep-19.mat).
+You will need to download the [VGG-19 model](http://www.vlfeat.org/matconvnet/models/imagenet-vgg-verydeep-19.mat). (URL is outdated.)
 
-Then just run art.py.
+Then just run (with tensorflow cpu version)
+    
+    python art.py
+    
+To use tensorflow gpu version, run 
+
+    python art.py -g 0
 
 References:
 - [A Neural Algorithm of Artistic Style](http://arxiv.org/abs/1508.06576)

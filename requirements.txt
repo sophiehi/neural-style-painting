@@ -1,0 +1,6 @@
+# tensorflow==1.0.1 #cpu
+tensorflow-gpu==1.0.1 #gpu
+scipy
+numpy
+pillow
+argparse

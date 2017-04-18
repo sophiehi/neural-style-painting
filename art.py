@@ -8,6 +8,7 @@ import numpy as np
 import scipy.io
 import scipy.misc
 import tensorflow as tf
+import argparse
 
 ###############################################################################
 # Constants for the image input and output.
@@ -267,9 +268,24 @@ def style_loss_func(sess, model):
     loss = sum([W[l] * E[l] for l in range(len(layers))])
     return loss
 
+parser = argparse.ArgumentParser(description='Non-real-time style transfer. '
+                                             'This model trains "IMAGE" itself, instead of filter.')
+parser.add_argument('--gpu', '-g', default=-1, type=int, help='GPU ID (negative value indicates CPU)')
+args = parser.parse_args()
 
 if __name__ == '__main__':
-    with tf.Session() as sess:
+    print("\nStarted.\n")
+
+    if args.gpu > -1:
+        device_ = '/gpu:{}'.format(args.gpu)
+        print(device_)
+    else:
+        device_ = '/cpu:0'
+
+    with tf.device(device_):
+        # Setup operations
+        print("Using " + device_ + "\n")
+    with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
         # Load the images.
         content_image = load_image(CONTENT_IMAGE)
         style_image = load_image(STYLE_IMAGE)
@@ -280,7 +296,7 @@ if __name__ == '__main__':
         # which will be the basis for the algorithm to "paint".
         input_image = generate_noise_image(content_image)
 
-        sess.run(tf.initialize_all_variables())
+        sess.run(tf.global_variables_initializer())
         # Construct content_loss using content_image.
         sess.run(model['input'].assign(content_image))
         content_loss = content_loss_func(sess, model)
@@ -302,7 +318,7 @@ if __name__ == '__main__':
         optimizer = tf.train.AdamOptimizer(2.0)
         train_step = optimizer.minimize(total_loss)
 
-        sess.run(tf.initialize_all_variables())
+        sess.run(tf.global_variables_initializer())
         sess.run(model['input'].assign(input_image))
         for it in range(ITERATIONS):
             sess.run(train_step)
@@ -319,3 +335,4 @@ if __name__ == '__main__':
                 filename = 'output/%d.png' % (it)
                 save_image(filename, mixed_image)
 
+    print("\nFinished.\n")
